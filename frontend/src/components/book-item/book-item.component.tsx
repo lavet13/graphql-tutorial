@@ -1,9 +1,10 @@
 import { Stack, Box, Alert, CircularProgress } from '@mui/material';
 
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import { useQuery, gql } from '@apollo/client';
 import { Book } from '../../routes/home/home.route';
+import GenericButtonComponent from '../button/button.component';
 
 export const GET_BOOK = gql`
   query GetBook($id: ID!) {
@@ -36,11 +37,21 @@ const BookItem = () => {
         <CircularProgress />
       ) : error ? (
         <Alert severity='error'>Error message: {error.message}</Alert>
+      ) : !data?.getBookById ? (
+        <Alert severity='error'>Error message: Нет такой книги!</Alert>
       ) : (
         <Stack justifyContent={'center'} alignItems={'center'}>
-          <Box>id: {data?.getBookById.id}</Box>
-          <Box>title: {data?.getBookById.title}</Box>
-          <Box>author: {data?.getBookById.author}</Box>
+          <Box>id: {data?.getBookById?.id}</Box>
+          <Box>title: {data?.getBookById?.title}</Box>
+          <Box>author: {data?.getBookById?.author}</Box>
+          <GenericButtonComponent
+            component={Link}
+            to={`/book/edit/${data?.getBookById?.id}`}
+            variant='outlined'
+            color='info'
+          >
+            Изменить
+          </GenericButtonComponent>
         </Stack>
       )}
     </>

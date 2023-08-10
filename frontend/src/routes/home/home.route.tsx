@@ -10,7 +10,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import BooksList from '../../components/books-list/books-list.component';
 import GenericButtonComponent from '../../components/button/button.component';
 
-const GET_BOOKS = gql`
+export const GET_BOOKS = gql`
   query GetBooks {
     books {
       id
@@ -24,6 +24,7 @@ export type Book = {
   id: string;
   title: string;
   author: string;
+  __typename: 'Book';
 };
 
 export type BooksQuery = {
