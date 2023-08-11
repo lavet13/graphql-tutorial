@@ -134,12 +134,7 @@ const EditBookForm = () => {
       ) : (
         <form onSubmit={handleSubmit(onSubmit)}>
           <Stack alignItems='center' maxWidth={500} mx={'auto'} spacing={2}>
-            <TextField
-              variant='standard'
-              disabled
-              label='Id'
-              defaultValue={id}
-            />
+            <TextField variant='filled' disabled label='Id' defaultValue={id} />
 
             <Controller
               name='title'
@@ -149,8 +144,9 @@ const EditBookForm = () => {
                   {...field}
                   label='Название книги'
                   error={invalid}
+                  color='secondary'
                   helperText={error?.message || null}
-                  variant='standard'
+                  variant='outlined'
                 />
               )}
             />
@@ -163,15 +159,16 @@ const EditBookForm = () => {
                   {...field}
                   label='Автор книги'
                   error={invalid}
+                  color='secondary'
                   helperText={error?.message || null}
-                  variant='standard'
+                  variant='outlined'
                 />
               )}
             />
 
             <LoadingButton
               type='submit'
-              size='small'
+              size='large'
               startIcon={<Save />}
               loading={mutationLoading}
               variant='text'

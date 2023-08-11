@@ -29,6 +29,7 @@ type DefaultValues = Omit<Book, 'id' | '__typename'>;
 
 const AddBookForm = () => {
   const navigate = useNavigate();
+
   const [addBook, { loading, error, reset }] = useMutation<AddBookMutation>(
     ADD_BOOK,
     {
@@ -92,7 +93,13 @@ const AddBookForm = () => {
         </Alert>
       ) : (
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack alignItems='center' maxWidth={500} mx={'auto'} spacing={2}>
+          <Stack
+            mt={5}
+            alignItems='center'
+            maxWidth={500}
+            mx={'auto'}
+            spacing={2}
+          >
             <Controller
               name='title'
               control={control}
@@ -104,7 +111,7 @@ const AddBookForm = () => {
                   error={invalid}
                   color='secondary'
                   helperText={error?.message || null}
-                  variant='standard'
+                  variant='outlined'
                 />
               )}
             />
@@ -120,7 +127,7 @@ const AddBookForm = () => {
                   color='secondary'
                   error={invalid}
                   helperText={error?.message || null}
-                  variant='standard'
+                  variant='outlined'
                 />
               )}
             />
@@ -128,7 +135,7 @@ const AddBookForm = () => {
             <LoadingButton
               sx={{ alignSelf: 'center' }}
               type='submit'
-              size='medium'
+              size='large'
               startIcon={<Save />}
               loading={loading}
               variant='text'

@@ -12,9 +12,23 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { ApolloProvider, InMemoryCache, ApolloClient } from '@apollo/client';
 
+import { isDialogOpenVar } from './cache.ts';
+
 const client = new ApolloClient({
   uri: 'http://localhost:4000/',
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies: {
+      Query: {
+        fields: {
+          isDialogOpen: {
+            read() {
+              return isDialogOpenVar();
+            },
+          },
+        },
+      },
+    },
+  }),
 });
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

@@ -6,7 +6,6 @@ import { CircularProgress, Stack } from '@mui/material';
 
 import { Alert } from '@mui/lab';
 
-import Grid from '@mui/material/Unstable_Grid2';
 import BooksList from '../../components/books-list/books-list.component';
 import GenericButtonComponent from '../../components/button/button.component';
 
@@ -41,10 +40,8 @@ const Home = () => {
       ) : error ? (
         <Alert severity='error'>Error message: {error.message}</Alert>
       ) : (
-        <>
-          <Grid width={'100%'} container spacing={2}>
-            <BooksList data={data} />
-          </Grid>
+        <Stack mt={3}>
+          <BooksList data={data} />
           <Stack mt={3} justifyContent={'center'}>
             <GenericButtonComponent
               component={Link}
@@ -56,7 +53,7 @@ const Home = () => {
               Добавить книгу
             </GenericButtonComponent>
           </Stack>
-        </>
+        </Stack>
       )}
     </>
   );

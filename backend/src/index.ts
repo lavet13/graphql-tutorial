@@ -12,6 +12,7 @@ const typeDefs = `#graphql
   type Mutation {
     addBook(title: String, author: String): Book
     updateBook(id: ID!, title: String, author: String): Book
+    deleteBook(id: ID!): Book
   }
 
   type Book {
@@ -56,6 +57,9 @@ const resolvers = {
     updateBook: (_, args) => {
       books.splice(args.id, 1, { ...args });
       return args;
+    },
+    deleteBook: (_, args) => {
+      return books.splice(args.id, 1).at(0);
     },
   },
 };

@@ -2,9 +2,10 @@ import { Stack, Box, Alert, CircularProgress } from '@mui/material';
 
 import { Link, useParams } from 'react-router-dom';
 
-import { useQuery, gql } from '@apollo/client';
+import { useQuery, gql, useMutation } from '@apollo/client';
 import { Book } from '../../routes/home/home.route';
 import GenericButtonComponent from '../button/button.component';
+import DraggableDialog from '../draggable-dialog/draggable-dialog.component';
 
 export const GET_BOOK = gql`
   query GetBook($id: ID!) {
@@ -24,12 +25,35 @@ export type BookQuery = {
   getBookById: Book;
 };
 
+type DeleteBookMutation = {
+  deleteBook: Book;
+};
+
+const DELETE_BOOK = gql`
+  mutation DeleteBook($id: ID!) {
+    deleteBook(id: $id) {
+      id
+      title
+      author
+    }
+  }
+`;
+
 const BookItem = () => {
   const { id } = useParams<keyof BookItemParams>() as BookItemParams;
 
   const { loading, error, data } = useQuery<BookQuery>(GET_BOOK, {
     variables: { id },
   });
+
+  const [deleteBook, { loading: mutationLoading, error: mutationError }] =
+    useMutation<DeleteBookMutation>(DELETE_BOOK, {
+      update(cache, { data }) {},
+    });
+
+  const handleDelete = () => {
+    deleteBook({ variables: { id } });
+  };
 
   return (
     <>
@@ -40,19 +64,36 @@ const BookItem = () => {
       ) : !data?.getBookById ? (
         <Alert severity='error'>Error message: Нет такой книги!</Alert>
       ) : (
-        <Stack justifyContent={'center'} alignItems={'center'}>
-          <Box>id: {data?.getBookById?.id}</Box>
-          <Box>title: {data?.getBookById?.title}</Box>
-          <Box>author: {data?.getBookById?.author}</Box>
-          <GenericButtonComponent
-            component={Link}
-            to={`/book/edit/${data?.getBookById?.id}`}
-            variant='outlined'
-            color='info'
+        <>
+          <Stack
+            alignItems={'flex-start'}
+            spacing={2}
+            maxWidth={500}
+            mx={'auto'}
           >
-            Изменить
-          </GenericButtonComponent>
-        </Stack>
+            <Box>Идентификатор: {data?.getBookById?.id}</Box>
+            <Box>Название книги: {data?.getBookById?.title}</Box>
+            <Box>Автор книги: {data?.getBookById?.author}</Box>
+            <Stack direction={'row'} spacing={2}>
+              <GenericButtonComponent
+                component={Link}
+                to={`/book/edit/${data?.getBookById?.id}`}
+                variant='contained'
+                color='primary'
+                size='large'
+              >
+                Изменить
+              </GenericButtonComponent>
+              <DraggableDialog
+                title='Удалить книгу'
+                content='Вы уверены что хотите удалить книгу?'
+                actionTitle='Удалить'
+                buttonColor='error'
+                handleAction={handleDelete}
+              />
+            </Stack>
+          </Stack>
+        </>
       )}
     </>
   );

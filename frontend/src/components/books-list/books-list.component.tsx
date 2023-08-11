@@ -12,7 +12,7 @@ type BooksListProps = { data?: BooksQuery };
 
 const BooksList: FC<BooksListProps> = ({ data }) => {
   return (
-    <>
+    <Grid width={'100%'} container spacing={2}>
       {data?.books.map(book => (
         <Grid key={book.id} xs={12} sm={6} md={4}>
           <Card>
@@ -27,7 +27,7 @@ const BooksList: FC<BooksListProps> = ({ data }) => {
           </Card>
         </Grid>
       ))}
-    </>
+    </Grid>
   );
 };
 
