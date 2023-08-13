@@ -1,6 +1,7 @@
 import { FC } from 'react';
 
 import {
+  Alert,
   Button,
   ButtonProps,
   Dialog,
@@ -13,8 +14,9 @@ import {
 } from '@mui/material';
 
 import Draggable from 'react-draggable';
-import { useReactiveVar } from '@apollo/client';
+import { ApolloError, useReactiveVar } from '@apollo/client';
 import { isDialogOpenVar } from '../../cache';
+import { LoadingButton } from '@mui/lab';
 
 const PaperComponent = (props: PaperProps) => {
   return (
@@ -32,6 +34,9 @@ type DraggableDialogProps = {
   content: string;
   actionTitle: string;
   buttonColor: ButtonProps['color'];
+  loading: boolean;
+  error?: ApolloError;
+  reset: () => void;
   handleAction: () => void;
 };
 
@@ -41,6 +46,9 @@ const DraggableDialog: FC<DraggableDialogProps> = ({
   actionTitle,
   buttonColor,
   handleAction,
+  loading,
+  error,
+  reset,
 }) => {
   const open = useReactiveVar(isDialogOpenVar);
 
@@ -51,6 +59,13 @@ const DraggableDialog: FC<DraggableDialogProps> = ({
   const handleClose = () => {
     isDialogOpenVar(false);
   };
+
+  const handleSomeAction = () => {
+    handleAction();
+    handleClose();
+  };
+
+  const handleReset = () => reset();
 
   return (
     <>
@@ -72,15 +87,27 @@ const DraggableDialog: FC<DraggableDialogProps> = ({
           {title}
         </DialogTitle>
         <DialogContent>
-          <DialogContentText>{content}</DialogContentText>
+          <DialogContentText>
+            {error ? (
+              <Alert onClose={handleReset} severity='error'>
+                Error message: {error.message}
+              </Alert>
+            ) : (
+              content
+            )}
+          </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button autoFocus color='info' onClick={handleClose}>
             Отменить
           </Button>
-          <Button onClick={handleAction} color={buttonColor}>
-            {actionTitle}
-          </Button>
+          <LoadingButton
+            loading={loading}
+            onClick={handleSomeAction}
+            color={buttonColor}
+          >
+            <span>{actionTitle}</span>
+          </LoadingButton>
         </DialogActions>
       </Dialog>
     </>

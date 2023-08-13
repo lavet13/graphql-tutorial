@@ -49,29 +49,27 @@ const EditBookForm = () => {
     variables: { id },
   });
 
-  const [
-    updateBook,
-    { loading: mutationLoading, error: mutationError, reset },
-  ] = useMutation<BookUpdateQuery>(UPDATE_BOOK, {
-    update(cache, { data }) {
-      if (data) {
-        const existingBooks = cache.readQuery<BooksQuery>({
-          query: GET_BOOKS,
-        });
-
-        if (existingBooks) {
-          cache.writeQuery<BooksQuery>({
+  const [updateBook, { error: mutationError, reset }] =
+    useMutation<BookUpdateQuery>(UPDATE_BOOK, {
+      update(cache, { data }) {
+        if (data) {
+          const existingBooks = cache.readQuery<BooksQuery>({
             query: GET_BOOKS,
-            data: {
-              books: existingBooks.books.map(book =>
-                book.id === id ? data.updateBook : book
-              ),
-            },
           });
+
+          if (existingBooks) {
+            cache.writeQuery<BooksQuery>({
+              query: GET_BOOKS,
+              data: {
+                books: existingBooks.books.map(book =>
+                  book.id === id ? data.updateBook : book
+                ),
+              },
+            });
+          }
         }
-      }
-    },
-  });
+      },
+    });
 
   const handleResetMutation = () => reset();
 
@@ -97,9 +95,13 @@ const EditBookForm = () => {
       .required('Автор книги обязателен к заполнению'),
   });
 
-  const { control, handleSubmit, setValue } = useForm<DefaultValues>({
-    resolver: yupResolver(validationSchema),
-  });
+  const { control, handleSubmit, setValue, formState } = useForm<DefaultValues>(
+    {
+      resolver: yupResolver(validationSchema),
+    }
+  );
+
+  const { isSubmitting } = formState;
 
   const onSubmit: SubmitHandler<DefaultValues> = async data => {
     console.log(data);
@@ -170,7 +172,7 @@ const EditBookForm = () => {
               type='submit'
               size='large'
               startIcon={<Save />}
-              loading={mutationLoading}
+              loading={isSubmitting}
               variant='text'
               color='secondary'
             >

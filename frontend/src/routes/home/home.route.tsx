@@ -8,6 +8,7 @@ import { Alert } from '@mui/lab';
 
 import BooksList from '../../components/books-list/books-list.component';
 import GenericButtonComponent from '../../components/button/button.component';
+import { Book } from '@mui/icons-material';
 
 export const GET_BOOKS = gql`
   query GetBooks {
@@ -47,8 +48,9 @@ const Home = () => {
               component={Link}
               to={'book/add'}
               sx={{ alignSelf: 'flex-start' }}
-              variant='contained'
+              variant='text'
               size='medium'
+              startIcon={<Book />}
             >
               Добавить книгу
             </GenericButtonComponent>

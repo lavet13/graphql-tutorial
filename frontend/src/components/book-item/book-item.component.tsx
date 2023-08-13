@@ -1,9 +1,9 @@
 import { Stack, Box, Alert, CircularProgress } from '@mui/material';
 
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { useQuery, gql, useMutation } from '@apollo/client';
-import { Book } from '../../routes/home/home.route';
+import { Book, BooksQuery, GET_BOOKS } from '../../routes/home/home.route';
 import GenericButtonComponent from '../button/button.component';
 import DraggableDialog from '../draggable-dialog/draggable-dialog.component';
 
@@ -40,19 +40,29 @@ const DELETE_BOOK = gql`
 `;
 
 const BookItem = () => {
+  const navigate = useNavigate();
   const { id } = useParams<keyof BookItemParams>() as BookItemParams;
 
   const { loading, error, data } = useQuery<BookQuery>(GET_BOOK, {
     variables: { id },
   });
 
-  const [deleteBook, { loading: mutationLoading, error: mutationError }] =
-    useMutation<DeleteBookMutation>(DELETE_BOOK, {
-      update(cache, { data }) {},
-    });
+  const [
+    deleteBook,
+    { loading: mutationLoading, error: mutationError, reset },
+  ] = useMutation<DeleteBookMutation>(DELETE_BOOK, {
+    update(cache) {
+      cache.updateQuery<BooksQuery>({ query: GET_BOOKS }, data => {
+        if (data) {
+          return { books: data.books.filter(book => book.id !== id) };
+        }
+      });
+    },
+  });
 
-  const handleDelete = () => {
-    deleteBook({ variables: { id } });
+  const handleDelete = async () => {
+    console.log(await deleteBook({ variables: { id } }));
+    navigate('/');
   };
 
   return (
@@ -90,6 +100,9 @@ const BookItem = () => {
                 actionTitle='Удалить'
                 buttonColor='error'
                 handleAction={handleDelete}
+                loading={mutationLoading}
+                error={mutationError}
+                reset={reset}
               />
             </Stack>
           </Stack>

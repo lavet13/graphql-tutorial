@@ -30,25 +30,22 @@ type DefaultValues = Omit<Book, 'id' | '__typename'>;
 const AddBookForm = () => {
   const navigate = useNavigate();
 
-  const [addBook, { loading, error, reset }] = useMutation<AddBookMutation>(
-    ADD_BOOK,
-    {
-      update(cache, { data }) {
-        if (data) {
-          const existingBooks = cache.readQuery<BooksQuery>({
-            query: GET_BOOKS,
-          });
+  const [addBook, { error, reset }] = useMutation<AddBookMutation>(ADD_BOOK, {
+    update(cache, { data }) {
+      if (data) {
+        const existingBooks = cache.readQuery<BooksQuery>({
+          query: GET_BOOKS,
+        });
 
-          if (existingBooks) {
-            cache.writeQuery<BooksQuery>({
-              query: GET_BOOKS,
-              data: { books: [...existingBooks.books, data.addBook] },
-            });
-          }
+        if (existingBooks) {
+          cache.writeQuery<BooksQuery>({
+            query: GET_BOOKS,
+            data: { books: [...existingBooks.books, data.addBook] },
+          });
         }
-      },
-    }
-  );
+      }
+    },
+  });
 
   const handleResetMutation = () => reset();
 
@@ -61,9 +58,11 @@ const AddBookForm = () => {
       .required('Автор книги обязателен к заполнению'),
   });
 
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, formState } = useForm({
     resolver: yupResolver(validationSchema),
   });
+
+  const { isSubmitting } = formState;
 
   const onSubmit: SubmitHandler<DefaultValues> = async data => {
     console.log(data);
@@ -137,7 +136,7 @@ const AddBookForm = () => {
               type='submit'
               size='large'
               startIcon={<Save />}
-              loading={loading}
+              loading={isSubmitting}
               variant='text'
               color='secondary'
             >
