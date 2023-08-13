@@ -59,7 +59,12 @@ const resolvers = {
       return args;
     },
     deleteBook: (_, args) => {
-      return books.splice(args.id, 1).at(0);
+      return books
+        .splice(
+          books.findIndex(book => book.id === args.id),
+          1
+        )
+        .at(0);
     },
   },
 };

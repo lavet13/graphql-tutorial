@@ -51,10 +51,14 @@ const BookItem = () => {
     deleteBook,
     { loading: mutationLoading, error: mutationError, reset },
   ] = useMutation<DeleteBookMutation>(DELETE_BOOK, {
-    update(cache) {
+    update(cache, { data: dataFromServer }) {
       cache.updateQuery<BooksQuery>({ query: GET_BOOKS }, data => {
-        if (data) {
-          return { books: data.books.filter(book => book.id !== id) };
+        if (data && dataFromServer) {
+          return {
+            books: data.books.filter(
+              book => book.id !== dataFromServer.deleteBook.id
+            ),
+          };
         }
       });
     },
