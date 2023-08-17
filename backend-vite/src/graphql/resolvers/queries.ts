@@ -1,5 +1,5 @@
-import { QueryResolvers } from '../__generated__/types';
-import { books } from 'src/app';
+import { QueryResolvers } from '../types';
+import { books } from '../../app';
 
 const queries: QueryResolvers = {
   books: () => books,

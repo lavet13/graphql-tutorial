@@ -1,5 +1,5 @@
-import { books } from 'src/app';
-import { Book, MutationResolvers } from '../__generated__/types';
+import { books } from '../../app';
+import { Book, MutationResolvers } from '../types';
 import { nanoid } from 'nanoid';
 
 const mutations: MutationResolvers = {
