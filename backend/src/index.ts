@@ -1,6 +1,7 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import { nanoid } from 'nanoid';
+import { db } from './app/models/index.js';
 
 const typeDefs = `#graphql
   type Query {
@@ -28,6 +29,13 @@ const typeDefs = `#graphql
   }
 `;
 
+try {
+  await db.sequelize.authenticate();
+  console.log('Connection has been established successfully.');
+} catch (err) {
+  console.error('Unable to connect to the database:', err);
+}
+
 const books = [
   {
     id: nanoid(),
@@ -38,6 +46,21 @@ const books = [
     id: nanoid(),
     title: 'City of Glass',
     author: 'Paul Auster',
+  },
+  {
+    id: nanoid(),
+    title: 'City of Astro',
+    author: 'John Maclaren',
+  },
+  {
+    id: nanoid(),
+    title: 'City of Gonzalez',
+    author: 'Michael Beatch',
+  },
+  {
+    id: nanoid(),
+    title: 'City of Australia',
+    author: 'Pasha Mackenzi',
   },
 ];
 
@@ -55,7 +78,11 @@ const resolvers = {
       return newBook;
     },
     updateBook: (_, args) => {
-      books.splice(args.id, 1, { ...args });
+      books.splice(
+        books.findIndex(book => book.id === args.id),
+        1,
+        { ...args }
+      );
       return args;
     },
     deleteBook: (_, args) => {

@@ -37,7 +37,7 @@ type DraggableDialogProps = {
   loading: boolean;
   error?: ApolloError;
   reset: () => void;
-  handleAction: () => void;
+  handleAction: () => Promise<void>;
 };
 
 const DraggableDialog: FC<DraggableDialogProps> = ({
@@ -60,8 +60,8 @@ const DraggableDialog: FC<DraggableDialogProps> = ({
     isDialogOpenVar(false);
   };
 
-  const handleSomeAction = () => {
-    handleAction();
+  const handleSomeAction = async () => {
+    await handleAction();
     handleClose();
   };
 
