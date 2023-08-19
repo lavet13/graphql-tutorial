@@ -10,6 +10,7 @@ import { nanoid } from 'nanoid';
 import { readFileSync } from 'fs';
 
 import resolvers from './graphql/resolvers';
+import { Book } from './graphql/types';
 
 export interface MyContext {
   token?: String;
@@ -18,7 +19,7 @@ export interface MyContext {
 // Construct a schema, using GraphQL schema language
 const typeDefs = readFileSync('./src/schema.graphql', { encoding: 'utf-8' });
 
-export const books = [
+export const books: Book[] = [
   {
     id: nanoid(),
     title: 'The Awakening',
