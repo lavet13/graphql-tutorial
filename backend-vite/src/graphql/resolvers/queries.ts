@@ -3,7 +3,7 @@ import { books } from '../../app';
 
 const queries: QueryResolvers = {
   books: (_, { offset, limit }) => {
-    if (offset && limit) {
+    if (typeof offset === 'number' && typeof limit === 'number') {
       return books.slice(offset, limit);
     } else {
       return books;
