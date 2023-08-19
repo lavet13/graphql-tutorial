@@ -2,12 +2,15 @@ import { Stack, Box, Alert, CircularProgress } from '@mui/material';
 
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
-import { useQuery, gql, useMutation } from '@apollo/client';
-import { Book, BooksQuery, GET_BOOKS } from '../../routes/home/home.route';
+import { useQuery, useMutation } from '@apollo/client';
+import { GET_BOOKS } from '../../routes/home/home.route';
 import GenericButtonComponent from '../button/button.component';
 import DraggableDialog from '../draggable-dialog/draggable-dialog.component';
 
-export const GET_BOOK = gql`
+import { gql } from '../../__generated/gql';
+import { GetBooksQuery } from '../../__generated/graphql';
+
+export const GET_BOOK = gql(/* GraphQL */ `
   query GetBook($id: ID!) {
     getBookById(id: $id) {
       id
@@ -15,21 +18,13 @@ export const GET_BOOK = gql`
       author
     }
   }
-`;
+`);
 
 type BookItemParams = {
   id: string;
 };
 
-export type BookQuery = {
-  getBookById: Book;
-};
-
-type DeleteBookMutation = {
-  deleteBook: Book;
-};
-
-const DELETE_BOOK = gql`
+const DELETE_BOOK = gql(/* GraphQL */ `
   mutation DeleteBook($id: ID!) {
     deleteBook(id: $id) {
       id
@@ -37,26 +32,26 @@ const DELETE_BOOK = gql`
       author
     }
   }
-`;
+`);
 
 const BookItem = () => {
   const navigate = useNavigate();
   const { id } = useParams<keyof BookItemParams>() as BookItemParams;
 
-  const { loading, error, data } = useQuery<BookQuery>(GET_BOOK, {
+  const { loading, error, data } = useQuery(GET_BOOK, {
     variables: { id },
   });
 
   const [
     deleteBook,
     { loading: mutationLoading, error: mutationError, reset },
-  ] = useMutation<DeleteBookMutation>(DELETE_BOOK, {
+  ] = useMutation(DELETE_BOOK, {
     update(cache, { data: dataFromServer }) {
-      cache.updateQuery<BooksQuery>({ query: GET_BOOKS }, data => {
+      cache.updateQuery<GetBooksQuery>({ query: GET_BOOKS }, data => {
         if (data && dataFromServer) {
           return {
-            books: data.books.filter(
-              book => book.id !== dataFromServer.deleteBook.id
+            books: data?.books?.filter(
+              book => book?.id !== dataFromServer.deleteBook?.id
             ),
           };
         }

@@ -1,17 +1,20 @@
 import { useEffect } from 'react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 
-import { Book, BooksQuery, GET_BOOKS } from '../../routes/home/home.route';
-import { BookQuery, GET_BOOK } from '../book-item/book-item.component';
+import { GET_BOOKS } from '../../routes/home/home.route';
+import { GET_BOOK } from '../book-item/book-item.component';
 
 import { CircularProgress, Alert, TextField, Stack } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { Save } from '@mui/icons-material';
+
+import { gql } from '../../__generated/gql';
+import { Book, GetBookQuery, GetBooksQuery } from '../../__generated/graphql';
 
 type AddAndEditBookFormParams = {
   id: string;
@@ -28,15 +31,15 @@ type BookUpdateQuery = {
   updateBook: Book;
 };
 
-const UPDATE_BOOK = gql`
-  mutation UpdateBook($id: ID!, $title: String, $author: String) {
+const UPDATE_BOOK = gql(/* GraphQL */ `
+  mutation UpdateBook($id: ID!, $title: String!, $author: String!) {
     updateBook(id: $id, title: $title, author: $author) {
       id
       title
       author
     }
   }
-`;
+`);
 
 const EditBookForm = () => {
   const { id } = useParams<
@@ -45,7 +48,7 @@ const EditBookForm = () => {
 
   const navigate = useNavigate();
 
-  const { loading, error, data } = useQuery<BookQuery>(GET_BOOK, {
+  const { loading, error, data } = useQuery<GetBookQuery>(GET_BOOK, {
     variables: { id },
   });
 
@@ -55,16 +58,16 @@ const EditBookForm = () => {
   ] = useMutation<BookUpdateQuery>(UPDATE_BOOK, {
     update(cache, { data }) {
       if (data) {
-        const existingBooks = cache.readQuery<BooksQuery>({
+        const existingBooks = cache.readQuery<GetBooksQuery>({
           query: GET_BOOKS,
         });
 
         if (existingBooks) {
-          cache.writeQuery<BooksQuery>({
+          cache.writeQuery<GetBooksQuery>({
             query: GET_BOOKS,
             data: {
-              books: existingBooks.books.map(book =>
-                book.id === id ? data.updateBook : book
+              books: existingBooks.books?.map(book =>
+                book?.id === id ? data.updateBook : book
               ),
             },
           });

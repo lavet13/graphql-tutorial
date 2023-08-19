@@ -1,4 +1,4 @@
-import { useQuery, gql } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 
 import { Link } from 'react-router-dom';
 
@@ -10,7 +10,9 @@ import BooksList from '../../components/books-list/books-list.component';
 import GenericButtonComponent from '../../components/button/button.component';
 import { Book } from '@mui/icons-material';
 
-export const GET_BOOKS = gql`
+import { gql } from '../../__generated/gql';
+
+export const GET_BOOKS = gql(/* GraphQL */ `
   query GetBooks {
     books {
       id
@@ -18,21 +20,10 @@ export const GET_BOOKS = gql`
       author
     }
   }
-`;
-
-export type Book = {
-  id: string;
-  title: string;
-  author: string;
-  __typename: 'Book';
-};
-
-export type BooksQuery = {
-  books: Book[];
-};
+`);
 
 const Home = () => {
-  const { loading, error, data } = useQuery<BooksQuery>(GET_BOOKS);
+  const { loading, error, data } = useQuery(GET_BOOKS);
 
   return (
     <>

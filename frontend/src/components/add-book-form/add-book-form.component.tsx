@@ -1,25 +1,28 @@
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { gql, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 
-import { Book, BooksQuery, GET_BOOKS } from '../../routes/home/home.route';
+import { GET_BOOKS } from '../../routes/home/home.route';
 
 import { Alert, Stack, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { Save } from '@mui/icons-material';
 
-const ADD_BOOK = gql`
-  mutation AddBook($title: String, $author: String) {
+import { gql } from '../../__generated/gql';
+import { Book, GetBooksQuery } from '../../__generated/graphql';
+
+const ADD_BOOK = gql(/* GraphQL */ `
+  mutation AddBook($title: String!, $author: String!) {
     addBook(title: $title, author: $author) {
       id
       title
       author
     }
   }
-`;
+`);
 
 type AddBookMutation = {
   addBook: Book;
@@ -35,14 +38,16 @@ const AddBookForm = () => {
     {
       update(cache, { data }) {
         if (data) {
-          const existingBooks = cache.readQuery<BooksQuery>({
+          const existingBooks = cache.readQuery<GetBooksQuery>({
             query: GET_BOOKS,
           });
 
-          if (existingBooks) {
-            cache.writeQuery<BooksQuery>({
+          if (existingBooks && existingBooks.books) {
+            cache.writeQuery<GetBooksQuery>({
               query: GET_BOOKS,
-              data: { books: [...existingBooks.books, data.addBook] },
+              data: {
+                books: [...existingBooks.books, data.addBook],
+              },
             });
           }
         }
