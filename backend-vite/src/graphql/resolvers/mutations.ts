@@ -29,6 +29,7 @@ const mutations: MutationResolvers = {
       )
       .at(0);
 
+    // return new Promise((_, reject) => setTimeout(() => reject('LUL'), 1000));
     return deletedBook ? deletedBook : null;
   },
 };

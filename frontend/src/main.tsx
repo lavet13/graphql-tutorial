@@ -6,7 +6,12 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import { CssBaseline, StyledEngineProvider } from '@mui/material';
+import {
+  CssBaseline,
+  StyledEngineProvider,
+  ThemeProvider,
+  createTheme,
+} from '@mui/material';
 
 import { BrowserRouter } from 'react-router-dom';
 
@@ -34,13 +39,21 @@ const client = new ApolloClient({
   }),
 });
 
+const theme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+});
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ApolloProvider client={client}>
       <BrowserRouter>
         <StyledEngineProvider injectFirst>
-          <CssBaseline />
-          <App />
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <App />
+          </ThemeProvider>
         </StyledEngineProvider>
       </BrowserRouter>
     </ApolloProvider>

@@ -38,11 +38,15 @@ const Home = () => {
 
       setIsNextFetchLoading(true);
       const fetchMoreResult = await fetchMore({
-        variables: { offset: data.books.length, limit: limit + 5 },
+        variables: {
+          offset: currentLength,
+          limit: limit + 5,
+        },
       });
       setIsNextFetchLoading(false);
 
       if (fetchMoreResult.data.books) {
+        console.log(fetchMoreResult.data.books.length);
         limitBooksVar(currentLength + fetchMoreResult.data.books.length);
       }
     }

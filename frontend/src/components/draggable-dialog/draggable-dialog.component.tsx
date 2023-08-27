@@ -60,7 +60,7 @@ const DraggableDialog: FC<DraggableDialogProps> = ({
     isDialogOpenVar(false);
   };
 
-  const handleSomeAction = async () => {
+  const handleTheAction = async () => {
     await handleAction();
     handleClose();
   };
@@ -103,7 +103,7 @@ const DraggableDialog: FC<DraggableDialogProps> = ({
           </Button>
           <LoadingButton
             loading={loading}
-            onClick={handleSomeAction}
+            onClick={handleTheAction}
             color={buttonColor}
           >
             <span>{actionTitle}</span>
