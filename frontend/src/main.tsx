@@ -13,6 +13,8 @@ import { BrowserRouter } from 'react-router-dom';
 import { ApolloProvider, InMemoryCache, ApolloClient } from '@apollo/client';
 
 import { isDialogOpenVar } from './cache.ts';
+// import { Book } from './__generated/graphql.ts';
+import { offsetLimitPagination } from '@apollo/client/utilities';
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000/',
@@ -25,6 +27,7 @@ const client = new ApolloClient({
               return isDialogOpenVar();
             },
           },
+          books: offsetLimitPagination(),
         },
       },
     },

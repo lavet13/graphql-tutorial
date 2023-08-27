@@ -1,20 +1,22 @@
-import { useQuery } from '@apollo/client';
+import { useQuery, useReactiveVar } from '@apollo/client';
 
 import { Link } from 'react-router-dom';
 
 import { CircularProgress, Stack } from '@mui/material';
 
-import { Alert } from '@mui/lab';
+import { Alert, LoadingButton } from '@mui/lab';
 
 import BooksList from '../../components/books-list/books-list.component';
 import GenericButtonComponent from '../../components/button/button.component';
 import { Book } from '@mui/icons-material';
 
 import { gql } from '../../__generated/gql';
+import { useState } from 'react';
+import { limitBooksVar } from '../../cache';
 
 export const GET_BOOKS = gql(/* GraphQL */ `
-  query GetBooks {
-    books {
+  query GetBooks($offset: Int, $limit: Int) {
+    books(offset: $offset, limit: $limit) {
       id
       title
       author
@@ -23,7 +25,28 @@ export const GET_BOOKS = gql(/* GraphQL */ `
 `);
 
 const Home = () => {
-  const { loading, error, data } = useQuery(GET_BOOKS);
+  const limit = useReactiveVar(limitBooksVar);
+  const [isNextFetchLoading, setIsNextFetchLoading] = useState(false);
+
+  const { loading, error, data, fetchMore } = useQuery(GET_BOOKS, {
+    variables: { offset: 0, limit },
+  });
+
+  const handleNextFetch = async () => {
+    if (data && data.books) {
+      const currentLength = data.books.length;
+
+      setIsNextFetchLoading(true);
+      const fetchMoreResult = await fetchMore({
+        variables: { offset: data.books.length, limit: limit + 5 },
+      });
+      setIsNextFetchLoading(false);
+
+      if (fetchMoreResult.data.books) {
+        limitBooksVar(currentLength + fetchMoreResult.data.books.length);
+      }
+    }
+  };
 
   return (
     <>
@@ -34,7 +57,7 @@ const Home = () => {
       ) : (
         <Stack mt={3}>
           <BooksList data={data} />
-          <Stack mt={3} justifyContent={'center'}>
+          <Stack direction={'row'} spacing={1} mt={3} alignItems={'center'}>
             <GenericButtonComponent
               component={Link}
               to={'book/add'}
@@ -45,6 +68,14 @@ const Home = () => {
             >
               Добавить книгу
             </GenericButtonComponent>
+            <LoadingButton
+              onClick={handleNextFetch}
+              sx={{ alignSelf: 'flex-start' }}
+              variant='outlined'
+              loading={isNextFetchLoading}
+            >
+              Загрузить еще книг
+            </LoadingButton>
           </Stack>
         </Stack>
       )}

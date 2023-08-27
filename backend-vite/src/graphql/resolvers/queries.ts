@@ -4,7 +4,7 @@ import { books } from '../../app';
 const queries: QueryResolvers = {
   books: (_, { offset, limit }) => {
     if (typeof offset === 'number' && typeof limit === 'number') {
-      return books.slice(offset, limit);
+      return books.slice(offset < 0 ? 0 : offset, limit);
     } else {
       return books;
     }

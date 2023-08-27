@@ -3,12 +3,11 @@ import { Stack, Box, Alert, CircularProgress } from '@mui/material';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/client';
-import { GET_BOOKS } from '../../routes/home/home.route';
 import GenericButtonComponent from '../button/button.component';
 import DraggableDialog from '../draggable-dialog/draggable-dialog.component';
 
 import { gql } from '../../__generated/gql';
-import { GetBooksQuery } from '../../__generated/graphql';
+import { Book } from '../../__generated/graphql';
 
 export const GET_BOOK = gql(/* GraphQL */ `
   query GetBook($id: ID!) {
@@ -46,21 +45,24 @@ const BookItem = () => {
     deleteBook,
     { loading: mutationLoading, error: mutationError, reset },
   ] = useMutation(DELETE_BOOK, {
-    update(cache, { data: dataFromServer }) {
-      cache.updateQuery<GetBooksQuery>({ query: GET_BOOKS }, data => {
-        if (data && dataFromServer) {
-          return {
-            books: data?.books?.filter(
-              book => book?.id !== dataFromServer.deleteBook?.id
-            ),
-          };
-        }
-      });
+    update(cache, { data: mutatedData }) {
+      if (mutatedData && mutatedData.deleteBook) {
+        cache.modify({
+          fields: {
+            books(existingBooks = [], { readField }) {
+              return existingBooks.filter(
+                bookRef =>
+                  mutatedData.deleteBook?.id !== readField('id', bookRef)
+              );
+            },
+          },
+        });
+      }
     },
   });
 
   const handleDelete = async () => {
-    console.log(await deleteBook({ variables: { id } }));
+    await deleteBook({ variables: { id } });
     navigate('/');
   };
 

@@ -45,6 +45,56 @@ export const books: Book[] = [
     title: 'City of Australia',
     author: 'Pasha Mackenzi',
   },
+  {
+    id: nanoid(),
+    title: 'The Awakening',
+    author: 'Kate Chopin',
+  },
+  {
+    id: nanoid(),
+    title: 'City of Glass',
+    author: 'Paul Auster',
+  },
+  {
+    id: nanoid(),
+    title: 'City of Astro',
+    author: 'John Maclaren',
+  },
+  {
+    id: nanoid(),
+    title: 'City of Gonzalez',
+    author: 'Michael Beatch',
+  },
+  {
+    id: nanoid(),
+    title: 'City of Australia',
+    author: 'Pasha Mackenzi',
+  },
+  {
+    id: nanoid(),
+    title: 'The Awakening',
+    author: 'Kate Chopin',
+  },
+  {
+    id: nanoid(),
+    title: 'City of Glass',
+    author: 'Paul Auster',
+  },
+  {
+    id: nanoid(),
+    title: 'City of Astro',
+    author: 'John Maclaren',
+  },
+  {
+    id: nanoid(),
+    title: 'City of Gonzalez',
+    author: 'Michael Beatch',
+  },
+  {
+    id: nanoid(),
+    title: 'City of Australia',
+    author: 'Pasha Mackenzi',
+  },
 ];
 
 async function bootstrap() {

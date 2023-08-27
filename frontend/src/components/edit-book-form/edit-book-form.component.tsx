@@ -62,6 +62,8 @@ const EditBookForm = () => {
           query: GET_BOOKS,
         });
 
+        console.log(existingBooks);
+
         if (existingBooks) {
           cache.writeQuery<GetBooksQuery>({
             query: GET_BOOKS,
