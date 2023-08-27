@@ -46,7 +46,6 @@ const Home = () => {
       setIsNextFetchLoading(false);
 
       if (fetchMoreResult.data.books) {
-        console.log(fetchMoreResult.data.books.length);
         limitBooksVar(currentLength + fetchMoreResult.data.books.length);
       }
     }
@@ -72,6 +71,7 @@ const Home = () => {
             >
               Добавить книгу
             </GenericButtonComponent>
+
             <LoadingButton
               onClick={handleNextFetch}
               sx={{ alignSelf: 'flex-start' }}
