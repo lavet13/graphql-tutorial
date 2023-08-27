@@ -7,7 +7,6 @@ import GenericButtonComponent from '../button/button.component';
 import DraggableDialog from '../draggable-dialog/draggable-dialog.component';
 
 import { gql } from '../../__generated/gql';
-import { Book } from '../../__generated/graphql';
 
 export const GET_BOOK = gql(/* GraphQL */ `
   query GetBook($id: ID!) {
