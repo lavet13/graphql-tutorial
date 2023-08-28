@@ -17,7 +17,7 @@ const documents = {
     "\n  query GetBook($id: ID!) {\n    getBookById(id: $id) {\n      id\n      title\n      author\n    }\n  }\n": types.GetBookDocument,
     "\n  mutation DeleteBook($id: ID!) {\n    deleteBook(id: $id) {\n      id\n      title\n      author\n    }\n  }\n": types.DeleteBookDocument,
     "\n  mutation UpdateBook($id: ID!, $title: String!, $author: String!) {\n    updateBook(id: $id, title: $title, author: $author) {\n      id\n      title\n      author\n    }\n  }\n": types.UpdateBookDocument,
-    "\n  query GetBooks($offset: Int, $limit: Int) {\n    books(offset: $offset, limit: $limit) {\n      id\n      title\n      author\n    }\n  }\n": types.GetBooksDocument,
+    "\n  query GetBooks($offset: Int) {\n    books(offset: $offset, limit: 10) {\n      id\n      title\n      author\n    }\n  }\n": types.GetBooksDocument,
 };
 
 /**
@@ -53,7 +53,7 @@ export function gql(source: "\n  mutation UpdateBook($id: ID!, $title: String!, 
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query GetBooks($offset: Int, $limit: Int) {\n    books(offset: $offset, limit: $limit) {\n      id\n      title\n      author\n    }\n  }\n"): (typeof documents)["\n  query GetBooks($offset: Int, $limit: Int) {\n    books(offset: $offset, limit: $limit) {\n      id\n      title\n      author\n    }\n  }\n"];
+export function gql(source: "\n  query GetBooks($offset: Int) {\n    books(offset: $offset, limit: 10) {\n      id\n      title\n      author\n    }\n  }\n"): (typeof documents)["\n  query GetBooks($offset: Int) {\n    books(offset: $offset, limit: 10) {\n      id\n      title\n      author\n    }\n  }\n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

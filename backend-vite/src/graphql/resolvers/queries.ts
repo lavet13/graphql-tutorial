@@ -2,9 +2,9 @@ import { QueryResolvers } from '../types';
 import { books } from '../../app';
 
 const queries: QueryResolvers = {
-  books: (_, { offset, limit }) => {
+  books: (_, { offset = 0, limit = 5 }) => {
     if (typeof offset === 'number' && typeof limit === 'number') {
-      return books.slice(offset < 0 ? 0 : offset, limit);
+      return books.slice(offset < 0 ? 0 : offset, offset + limit);
     } else {
       return books;
     }
