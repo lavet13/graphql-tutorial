@@ -18,8 +18,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { ApolloProvider, InMemoryCache, ApolloClient } from '@apollo/client';
 
 import { isDialogOpenVar } from './cache.ts';
-// import { Book } from './__generated/graphql.ts';
-import { offsetLimitPagination } from '@apollo/client/utilities';
+// import { offsetLimitPagination } from '@apollo/client/utilities';
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000/',
@@ -32,7 +31,29 @@ const client = new ApolloClient({
               return isDialogOpenVar();
             },
           },
-          books: offsetLimitPagination(),
+          // books: offsetLimitPagination(),
+          books: {
+            keyArgs: false,
+            merge(existing, incoming, { args }) {
+              const merged = existing ? existing.slice(0) : [];
+
+              if (args) {
+                const { offset = 0 } = args;
+
+                for (let i = 0; i < incoming.length; ++i) {
+                  merged[offset + i] = incoming[i];
+                }
+
+                return merged;
+              } else {
+                // It's unusual (probably a mistake) for a paginated field not
+                // to receive any arguments, so you might prefer to throw an
+                // exception here, instead of recovering by appending incoming
+                // onto the existing array.
+                merged.push(...incoming);
+              }
+            },
+          },
         },
       },
     },
@@ -42,6 +63,39 @@ const client = new ApolloClient({
 const theme = createTheme({
   palette: {
     mode: 'dark',
+  },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          scrollbarColor: '#6b6b6b #2b2b2b',
+          '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
+            backgroundColor: '#2b2b2b',
+          },
+          '&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb': {
+            borderRadius: 8,
+            backgroundColor: '#6b6b6b',
+            minHeight: 24,
+            border: '3px solid #2b2b2b',
+          },
+          '&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus':
+            {
+              backgroundColor: '#959595',
+            },
+          '&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active':
+            {
+              backgroundColor: '#959595',
+            },
+          '&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover':
+            {
+              backgroundColor: '#959595',
+            },
+          '&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner': {
+            backgroundColor: '#2b2b2b',
+          },
+        },
+      },
+    },
   },
 });
 
