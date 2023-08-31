@@ -18,7 +18,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { ApolloProvider, InMemoryCache, ApolloClient } from '@apollo/client';
 
 import { isDialogOpenVar } from './cache.ts';
-import { offsetLimitPagination } from '@apollo/client/utilities';
+// import { offsetLimitPagination } from '@apollo/client/utilities';
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000/',
@@ -31,7 +31,29 @@ const client = new ApolloClient({
               return isDialogOpenVar();
             },
           },
-          books: offsetLimitPagination(),
+          // books: offsetLimitPagination(),
+          books: {
+            keyArgs: false,
+            merge(existing, incoming, { args }) {
+              const merged = existing ? existing.slice(0) : [];
+
+              if (args) {
+                const { offset = 0 } = args;
+
+                for (let i = 0; i < incoming.length; ++i) {
+                  merged[offset + i] = incoming[i];
+                }
+
+                return merged;
+              } else {
+                // It's unusual (probably a mistake) for a paginated field not
+                // to receive any arguments, so you might prefer to throw an
+                // exception here, instead of recovering by appending incoming
+                // onto the existing array.
+                merged.push(...incoming);
+              }
+            },
+          },
         },
       },
     },
