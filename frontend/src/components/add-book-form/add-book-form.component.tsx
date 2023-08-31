@@ -42,8 +42,6 @@ const AddBookForm = () => {
             query: GET_BOOKS,
           });
 
-          console.log(existingBooks);
-
           if (existingBooks && existingBooks.books) {
             cache.writeQuery<GetBooksQuery>({
               query: GET_BOOKS,
