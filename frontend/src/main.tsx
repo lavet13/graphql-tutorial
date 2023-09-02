@@ -16,8 +16,6 @@ import {
 import { BrowserRouter } from 'react-router-dom';
 
 import { ApolloProvider, InMemoryCache, ApolloClient } from '@apollo/client';
-
-import { isDialogOpenVar } from './cache.ts';
 // import { offsetLimitPagination } from '@apollo/client/utilities';
 
 const client = new ApolloClient({
@@ -26,11 +24,6 @@ const client = new ApolloClient({
     typePolicies: {
       Query: {
         fields: {
-          isDialogOpen: {
-            read() {
-              return isDialogOpenVar();
-            },
-          },
           // books: offsetLimitPagination(),
           books: {
             keyArgs: false,
@@ -49,7 +42,7 @@ const client = new ApolloClient({
                 // It's unusual (probably a mistake) for a paginated field not
                 // to receive any arguments, so you might prefer to throw an
                 // exception here, instead of recovering by appending incoming
-                // onto the existing array.
+                // onto the merged array.
                 merged.push(...incoming);
               }
             },
